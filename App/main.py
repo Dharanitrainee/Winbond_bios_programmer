@@ -177,8 +177,8 @@ class App(ctk.CTk):
         self.topmenu.grid_columnconfigure(0, weight=1)
 
         open_image = ctk.CTkImage(
-            light_image=Image.open("open.png"),
-            dark_image=Image.open("open.png"),
+            light_image=Image.open("App/open.png"),
+            dark_image=Image.open("App/open.png"),
             size=(50, 50),
         )
         self.open_button = ctk.CTkButton(
@@ -197,8 +197,8 @@ class App(ctk.CTk):
         self.open_button.place(x=25, y=25)
 
         save_image = ctk.CTkImage(
-            light_image=Image.open("save.png"),
-            dark_image=Image.open("save.png"),
+            light_image=Image.open("App/save.png"),
+            dark_image=Image.open("App/save.png"),
             size=(50, 50),
         )
         self.save_button = ctk.CTkButton(
@@ -216,8 +216,8 @@ class App(ctk.CTk):
         self.save_button.place(x=125, y=25)
 
         read_image = ctk.CTkImage(
-            light_image=Image.open("read.png"),
-            dark_image=Image.open("read.png"),
+            light_image=Image.open("App/read.png"),
+            dark_image=Image.open("App/read.png"),
             size=(50, 50),
         )
         self.read_button = ctk.CTkButton(
@@ -240,8 +240,8 @@ class App(ctk.CTk):
         self.read_button.place(x=225, y=25)
 
         write_image = ctk.CTkImage(
-            light_image=Image.open("write.png"),
-            dark_image=Image.open("write.png"),
+            light_image=Image.open("App/write.png"),
+            dark_image=Image.open("App/write.png"),
             size=(50, 50),
         )
         self.write_button = ctk.CTkButton(
@@ -259,8 +259,8 @@ class App(ctk.CTk):
         self.write_button.place(x=325, y=25)
 
         erase_image = ctk.CTkImage(
-            light_image=Image.open("erase.png"),
-            dark_image=Image.open("erase.png"),
+            light_image=Image.open("App/erase.png"),
+            dark_image=Image.open("App/erase.png"),
             size=(50, 50),
         )
         self.erase_button = ctk.CTkButton(
