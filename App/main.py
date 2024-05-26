@@ -6,10 +6,9 @@ import binascii
 import threading
 import serial.tools.list_ports
 import serial
-import time
 
 
-ctk.set_appearance_mode("system")
+ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
 
@@ -20,7 +19,7 @@ class message_window(ctk.CTk):
         self.title("Message")
 
         self.message_label = ctk.CTkLabel(
-            self, text="messge", font=("Montserrat", 16), padx=10, pady=10
+            self, text="message", font=("Montserrat", 16), padx=10, pady=10
         )
         self.message_label.place(x=150, y=75)
 
@@ -65,15 +64,17 @@ def save_file():
     pass
 
 
+def list_uart_ports():
+    ports = serial.tools.list_ports.comports()
+    return [device.device for device in ports]
+
+
 class CustomUSBPortCombobox(ctk.CTkComboBox):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.usb_ports = self.list_uart_ports()
+        self._items = None
+        self.usb_ports = list_uart_ports()
         self.update_usb_ports()
-
-    def list_uart_ports(self):
-        ports = serial.tools.list_ports.comports()
-        return [device.device for device in ports]
 
     def update_usb_ports(self):
         self._items = tuple(self.usb_ports)
@@ -83,7 +84,7 @@ class CustomUSBPortCombobox(ctk.CTkComboBox):
             self.set("No devices")
 
     def refresh_ports(self):
-        self.usb_ports = self.list_uart_ports()
+        self.usb_ports = list_uart_ports()
         self.update_usb_ports()
 
 
@@ -142,6 +143,7 @@ def read(usb_port, current_chip_model, text_box):
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+        self.message_window = None
         self.title("BIOS Programmer")
         self.geometry("1100x580")
         self.resizable(False, False)
@@ -177,8 +179,8 @@ class App(ctk.CTk):
         self.topmenu.grid_columnconfigure(0, weight=1)
 
         open_image = ctk.CTkImage(
-            light_image=Image.open("App/open.png"),
-            dark_image=Image.open("App/open.png"),
+            light_image=Image.open("open.png"),
+            dark_image=Image.open("open.png"),
             size=(50, 50),
         )
         self.open_button = ctk.CTkButton(
@@ -197,8 +199,8 @@ class App(ctk.CTk):
         self.open_button.place(x=25, y=25)
 
         save_image = ctk.CTkImage(
-            light_image=Image.open("App/save.png"),
-            dark_image=Image.open("App/save.png"),
+            light_image=Image.open("save.png"),
+            dark_image=Image.open("save.png"),
             size=(50, 50),
         )
         self.save_button = ctk.CTkButton(
@@ -216,8 +218,8 @@ class App(ctk.CTk):
         self.save_button.place(x=125, y=25)
 
         read_image = ctk.CTkImage(
-            light_image=Image.open("App/read.png"),
-            dark_image=Image.open("App/read.png"),
+            light_image=Image.open("read.png"),
+            dark_image=Image.open("read.png"),
             size=(50, 50),
         )
         self.read_button = ctk.CTkButton(
@@ -240,8 +242,8 @@ class App(ctk.CTk):
         self.read_button.place(x=225, y=25)
 
         write_image = ctk.CTkImage(
-            light_image=Image.open("App/write.png"),
-            dark_image=Image.open("App/write.png"),
+            light_image=Image.open("write.png"),
+            dark_image=Image.open("write.png"),
             size=(50, 50),
         )
         self.write_button = ctk.CTkButton(
@@ -259,8 +261,8 @@ class App(ctk.CTk):
         self.write_button.place(x=325, y=25)
 
         erase_image = ctk.CTkImage(
-            light_image=Image.open("App/erase.png"),
-            dark_image=Image.open("App/erase.png"),
+            light_image=Image.open("erase.png"),
+            dark_image=Image.open("erase.png"),
             size=(50, 50),
         )
         self.erase_button = ctk.CTkButton(
@@ -287,22 +289,31 @@ class App(ctk.CTk):
         self.usb_ports_combobox.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
         self.usb_ports_combobox.place(x=525, y=45)
 
+        refresh_image = ctk.CTkImage(
+            light_image=Image.open("refresh.png"),
+            dark_image=Image.open("refresh.png"),
+            size=(20, 20),
+        )
         self.refresh_button = ctk.CTkButton(
-            self,
-            text="🗘",
+            self.topmenu,
+            image=refresh_image,
+            text="",
             command=self.usb_ports_combobox.refresh_ports,
             fg_color="transparent",
+            bg_color="transparent",
             width=20,
-            corner_radius=10,
+            corner_radius=15,
+            compound=tk.RIGHT,
         )
-        self.refresh_button.place(x=935, y=45)
+        self.refresh_button.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        self.refresh_button.place(y=45,x=670)
 
         self.chip_info_combobox = ctk.CTkComboBox(
             self.sidemenu,
             height=10,
             width=150,
             justify="left",
-            command=self.refresh_chiP_info,
+            command=self.refresh_chip_info,
         )
         self.chip_info_combobox.grid(row=0, column=0, padx=10, sticky="nsew")
         self.chip_info_combobox.place(x=50, y=50)
@@ -331,7 +342,7 @@ class App(ctk.CTk):
         self.chip_info_label.grid(row=1, column=0, padx=10, sticky="nsew")
         self.chip_info_label.place(x=0, y=120)
 
-    def refresh_chiP_info(self, choice):
+    def refresh_chip_info(self, choice):
         for chip_data in chip_collections:
             if chip_data.name == choice:
                 id = chip_data.identifier
